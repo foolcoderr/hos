@@ -1,0 +1,122 @@
+/* 세로모드 모바일 디바이스 (가로 해상도가 576px 보다 작은 화면에 적용) */
+@media (max-width: 575px) {
+} 
+ 
+/* 가로모드 모바일 디바이스 (가로 해상도가 576px보다 크고 768px 보다 작은 화면에 적용)  */
+@media (min-width: 576px) and (max-width: 1499px) {
+    
+}
+ 
+@media (min-width: 576px) and (max-width: 1499px) {
+    .wrap {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .head {
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        margin-left: 0;
+    }
+    .head1 {
+        margin-left: 0;
+        width: 100%;
+    }
+    .logo {
+        width: 100%;
+        display: inline;
+    }
+    .login {
+        float: left;
+    }
+    .login li{
+        margin-left: 0;
+        margin-right: 10px;
+    }
+    .menu-bar {
+        height: auto;
+        margin-left: 0;
+        text-align: left;
+    }
+    .menu-bar ul{
+        padding: 0 30px;
+        width: 100%;
+    }
+    .menu_bar_li{
+        margin:0;
+        width: 100%;
+    }
+    .menu_bar_li a{
+        margin:0;
+        width: 120px;
+    }
+    
+    .body {
+        width: auto;
+        margin-left: 0;
+    }
+    .slide_box {
+        width: auto;
+        height: auto;
+    }
+    .introduce {
+        width: auto;
+        margin:0;
+    }
+    .introduce_box {
+        width: auto;
+        margin: 0;
+        justify-content: end;
+    }
+    .introduce_box li{
+        margin: 0;
+        
+        
+    }
+    .introduce_box li div {
+        width: auto;
+    }
+    .what {
+        width: auto;
+    }
+    .watch a {
+        width: auto;
+    }
+    .hidden {
+        display:  hidden;
+        visibility: hidden;
+    }
+    .watch {
+        
+        width: 50px;
+        height: 50px;
+    }
+    .watch1 {
+        
+        width: 50px;
+        height: 50px;
+    }
+    .watch2 {
+        
+        width: 50px;
+        height: 50px;
+    }
+    .watch3 {
+        
+        width: 150px;
+        height: 150px;
+    }
+
+} 
+ 
+/* 데스크탑 (가로 해상도가 992px보다 크고 1199px 보다 작은 화면에 적용)  */
+@media (min-width: 992px) and (max-width: 1199px) {
+    
+    
+} 
+ 
+/* 큰화면 데스크탑 (가로 해상도가 1200px 보다 큰 화면에 적용)  */
+@media (min-width: 1200px) {
+
+}

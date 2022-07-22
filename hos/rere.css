@@ -1,0 +1,222 @@
+html {
+    scroll-behavior: smooth;
+}
+.body {
+    position: static;
+    height: auto;
+    margin-bottom: 50px;
+}
+
+.table_2 {
+    margin-left: auto;
+    margin-right: auto;
+}
+.rebox {
+
+}
+
+
+
+.goupbtn {
+    top: 93%;
+    left: 97%;
+    width: 50px;
+    height: 50px;
+    border-radius: 80%;
+    border: none;
+    position: fixed;
+    z-index: 2;
+    background-color: aqua;
+  }
+ul, li {
+    list-style: none;
+}
+a {
+    text-decoration: none;
+}
+h4 {
+    margin: 10px auto;
+}
+.step_stepfont {
+
+}
+#li_d {
+    border-left: 1px solid white;
+}
+.yeyacform {
+    width: auto;
+    height: 900px;
+    margin-left: 100px;
+
+}
+
+.user_yeyac {
+    padding-bottom: 100px;
+    display: flex;
+}
+.user_yeyac_li {
+    width: 500px;
+    margin: 0;
+}
+.yeyac_step0 {
+    text-align: center;
+    width: 240px;
+    padding: 30px;
+    background-color: beige;
+    
+}
+.yeyac_step1 {
+    text-align: center;
+    width: 500px;
+    padding: 30px;
+    background-color: beige;
+    
+}
+.yeyac_step2 {
+    text-align: center;
+    width: 500px;
+    padding: 30px;
+    background-color: beige;
+}
+.yeyac_step3 {
+    text-align: center;
+    width: 495px;
+    padding: 30px;
+    background-color: beige;
+}
+strong {
+    font-size: 20px;
+}
+#step0_user_yeyac_li {
+    width: 220px;
+    height: auto;
+    margin: 0;
+}
+.step0_intro {
+    width: 220px;
+    text-align: center;
+    margin-top: 350px;
+}
+
+.step1_intro {
+    width: 500px;
+    height: 800px;
+    text-align: center;
+}
+.doctor_article {
+    width: 500px;
+    height: 300px;
+}
+.doctor_section a{
+    margin-top: 50px;
+}
+.doctor_section a{
+    display: flex;
+}
+.doctor_img {
+
+}
+.doctor_img_size {
+    width: 150px;
+    height: 150px;
+    border-radius: 100%;
+}
+.dateform {
+    text-align: center;
+}
+.step4_form {
+    height: 1000px;
+}
+.time_size {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 20px;
+    margin-bottom: 80px;
+}
+.time_ul li{
+    margin-bottom: 50px;
+}
+.zinro_sau {
+    margin-left: 100px;
+}
+.textarea_mom {
+    text-align: center;
+}
+#textarea {
+    width: 300px;
+    height: 130px;
+}
+.button_mom {
+    text-align: center;
+    margin-top: 20px;
+}
+.button_mom2 {
+
+}
+.button_on {
+    display: inline-block;
+    background-color: #4780c5;
+    font-size: 20px;
+    border-radius: 4px;
+    margin-left: 40px;
+    width: 220px;
+    height: 120px;
+    line-height: 120px;
+}
+.button_on2 {
+    display: inline-block;
+    background-color: #0088fe;
+    font-size: 20px;
+    border-radius: 4px;
+    width: 445px;
+    height: 50px;
+    line-height: 40px;
+    margin-left: 40px;
+}
+.button_on:visited {
+    color: white;
+}
+.button_on2:visited {
+    color: white;
+}
+.button_reset {
+    display: inline-block;
+    background-color: #7a899c;
+    font-size: 20px;
+    border-radius: 4px;
+    width: 220px;
+    height: 120px;
+    line-height: 120px;
+}
+.button_reset:visited {
+    color: white;
+}
+
+.calendar {
+    text-align: center;
+}
+
+.nav-btn  {
+    cursor: pointer;
+    padding: 15px 20px;
+    border-radius: 15px;
+    background-color: #cfd9df;
+    color: black;
+    font-size: 20px;
+}
+.go-today {
+    cursor: default;
+}
+.year-month {
+    font-size: 25px;
+}
+.main div {
+    margin-bottom: 18px;
+}
+.dates {
+    margin-left: 10px;
+    font-size: 34px;
+    overflow: hidden;
+    border: 0;
+    background-color: white;
+}

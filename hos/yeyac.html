@@ -1,0 +1,704 @@
+<html>
+<head>
+<title>진료예약</title>
+</head>
+<script type="text/javascript">
+	var dept_list01 = $('.dept_list01');
+	var dept_list02 = $('.dept_list02');
+	var outer_doctor_choice = $('.outer_doctor_choice');
+	var sel_list_title_a = $('.sel_list_title > a');
+	var wrapper_dept_list02_sel = dept_list02.find('.wrapper_dept_list02_sel');
+	
+	//진료과로 예약 / 의료진으로 예약 탭 선택
+	$('.flag_tb02 > a').click(function(){
+		if (!$(this).hasClass('on')){
+			$('.flag_tb02 >a').removeClass('on');
+			$(this).addClass('on');
+		}
+		if ($(this).hasClass('dept'))//진료과로 예약
+		{
+			dept_list01.show();
+			dept_list02.hide();
+			outer_doctor_choice.hide();
+			wrapper_dept_list02_sel.hide();
+			sel_list_title_a.removeClass('on');
+			
+		}else if ($(this).hasClass('doct')){//의료진으로예약
+			dept_list01.hide();
+			dept_list02.hide();
+			outer_doctor_choice.show();
+			$('.outer_able_doctorlist02').nanoScroller();//스크롤러 있을때에만
+			$("#keyword").val("");			// 의료진으로 예약 클릭시 검색값 초기화. 
+			$('#searchDoctorList').html(""); // 의료진으로 예약 클릭시 검색값 초기화.
+			$("#keyword").attr("placeholder","의료진명을 입력해주세요");
+		}
+		$('.dept_list01_sel li,.sel_list_title > a').removeClass('on');//처음 진료과리스트 체크해제, 다음 진료과 타이틀 해제
+		$('.outer_able_doctorlist .card-content-title .chked').removeClass('chked_on'); //의료진둘다 체크 삭제
+		$('.outer_able_doctorlist .card-content .card-item-inner a').removeClass('on'); //의료진둘다 체크부모 체크삭제
+		$('.reser_step2 .detail_section,.reser_step3 .detail_section').removeClass('on');//step2,3 안보여주기
+		$('.outer_datelist01 ul a').removeClass('on');//날짜 색빼기
+		$('.outer_timelist01 ul a').removeClass('on');//시간 색빼기
+		$('.wrap_direct_reservation .consult_only_info').removeClass('on');//전문상담원 안내 지우기
+		$('.bottom_addition_txt10').show();//하단 전문상담원 안내 보이기
+	});
+	
+	function deptSel1(comnDtlsCd, dprtCd, detlCdNm){
+		var params = {"viewId":"step1", "search":"doctor", "mcdpCd":dprtCd};
+		$.ajax({
+			//async : false,
+			type : "get",
+			url : "https://www.samsunghospital.com/home/reservation/ajaxOnlineReservationDct.do",
+			cache : false,
+			dataType : "html",
+			data : params,
+			success : function(data) {
+				$("#mcdpCd").val(dprtCd);
+				$("#mcdpNm").val(detlCdNm);
+				$("#deptDoctor").html(data);
+				var choiced_dept_txt = detlCdNm;
+				dept_list01.hide();
+				dept_list02.show();
+				$('.sel_list_title .title_selected').text(choiced_dept_txt);//선택한 과 자동으로 뿌려주기
+				setTimeout(function(){
+					$('.outer_able_doctorlist01').nanoScroller({scroll:'top'});//스크롤러 있을때에만
+				},400);
+				if(!$(this).parent('li').hasClass('on')){
+					$(this).parent('li').addClass('on').siblings('li').removeClass('on');
+				}
+				// step2 step3 초기화 필요.
+				$('.reser_step2 .detail_section,.reser_step3 .detail_section').removeClass('on');//step2,3 안보여주기
+			},
+			error : function(xhr, status, error) {
+				alert(error);
+			}
+		});
+		
+		logger.loginside("/loginside/onlineReservation/doctorList.do?type=H");
+		
+		
+		
+		
+	}
+	
+	//진료과로 예약 탭, 진료과 선택 셀렉트박스
+	$('body').on('click','.sel_list_title > a',function(e){//진료과2
+		if (!$(this).hasClass('on')){
+			var choiced_dept_txt = $(this).find('.title_selected').text();//선택한과 이름
+			$(this).addClass('on');
+			$('.wrapper_dept_list02_sel li').removeClass('on');
+			wrapper_dept_list02_sel.show();
+			$('.wrapper_dept_list02_sel .inner_src_area').nanoScroller();
+			wrapper_dept_list02_sel.find('li > a').each(function(){//리스트에 해당과 컬러넣어주기
+				if ($(this).find('strong').text() == choiced_dept_txt){
+					$(this).parent('li').addClass('on');
+					return;
+				}	
+			});
+		}else{
+			$('.wrapper_dept_list02_sel li').removeClass('on');
+			$(this).removeClass('on');
+			wrapper_dept_list02_sel.hide();
+		}
+	});
+	
+	function deptSel2(comnDtlsCd, dprtCd, detlCdNm){
+		var params = {"viewId":"step1", "search":"doctor", "mcdpCd":dprtCd};
+		$.ajax({
+			//async : false,
+			type : "get",
+			url : "https://www.samsunghospital.com/home/reservation/ajaxOnlineReservationDct.do",
+			cache : false,
+			dataType : "html",
+			data : params,
+			success : function(data) {
+				$("#mcdpCd").val(dprtCd);
+				$("#mcdpNm").val(detlCdNm);
+				$("#deptDoctor").html(data);
+				setTimeout(function(){
+					$('.outer_able_doctorlist01').nanoScroller({scroll:'top'});//스크롤러 있을때에만
+				},400);
+				if(!$(this).parent('li').hasClass('on')){
+					var choiced_dept_txt = detlCdNm;
+					$('.wrapper_dept_list02_sel li').removeClass('on');
+					$(this).parent('li').addClass('on');
+					
+					//선택했으니 초기화
+					wrapper_dept_list02_sel.hide();
+					$('.sel_list_title > a').removeClass('on').find('.title_selected').text(choiced_dept_txt);//선택한 과 자동으로 뿌려주기
+					
+					// step2 step3 초기화 필요.
+					$('.reser_step2 .detail_section,.reser_step3 .detail_section').removeClass('on');//step2,3 안보여주기
+				}
+			},
+			error : function(xhr, status, error) {
+				alert(error);
+			}
+		});
+		
+		logger.loginside("/loginside/onlineReservation/doctorList.do?type=H");
+	}
+
+	//3step안보여주기 //날짜 색빼기 //시간 색빼기
+	function func_etc_remove(){
+		$('.reser_step3 .detail_section').removeClass('on');//3step안보여주기
+		$('.outer_datelist01 ul a').removeClass('on');//날짜 색빼기
+		$('.outer_timelist01 ul a').removeClass('on');//시간 색빼기
+	}
+
+	function showing_step2(mddrId, mddrNm, mcdpCd, smcrYn){//step2보여주기
+		
+		if (!$("#"+mddrId).find('.card-content-title .chked').hasClass('chked_on')){
+			
+			
+			if($("#"+mddrId).find(".card-content-textarea .card-content-title").find(".able_doc_choice").length > 0){
+				//modalWindow.modalShow('modal', '#popup-reservation-confirm02');
+				if($('#popup-reservation-confirm02').css("display") == "none"){//팝업띄우기
+					$('<div class="modal-dimed"></div>').insertBefore($('#popup-reservation-confirm02'));
+					$('#popup-reservation-confirm02').fadeIn(400);
+					$('body').css('overflow','hidden');
+					$('.modal-dimed').css('opacity',0.7).show()
+				}else{//팝업닫기
+					$('#popup-reservation-confirm02').fadeOut(400);
+					$('body').css('overflow','auto');
+					$('.modal-dimed').hide().remove();
+					
+				}
+							
+				$('#btn_close_ablechoided_pop100, #popup-reservation-confirm02 .modal-close').click(function(e){ //팝업닫기
+					$('#popup-reservation-confirm02').fadeOut(400);
+					$('.modal-dimed').hide().remove();
+					$('body').css('overflow','auto');
+				})
+			}
+			 
+			$('.outer_able_doctorlist .card-content-title .chked').removeClass('chked_on'); //의료진둘다 체크 삭제
+			$('.outer_able_doctorlist .card-content .card-item-inner a').removeClass('on'); //의료진둘다 체크부모 체크삭제
+			$("#"+mddrId).find('.card-content-title .chked').addClass('chked_on');
+			$("#"+mddrId).addClass('on');
+			
+			if (!$("#"+mddrId).parents('.doctor-profile').hasClass('consult_only')){
+				
+				var params = {"viewId":"step2", "mcdpCd":mcdpCd, "mddrId":mddrId, "memFieldYn":$("#memFieldYn").val(), "patno":$("#ptno").val()};
+				$.ajax({
+					//async : false,
+					type : "get",
+					url : "https://www.samsunghospital.com/home/reservation/ajaxOnlineReservationCal.do",
+					cache : false,
+					dataType : "html",
+					data : params,
+					success : function(data) {
+						
+						// TO-DO : 가장 빠른 진료일 안내 관련 인터페이스 추가 필요.
+						//if(data.indexOf('예약가능한 날짜가 없습니다.') != -1){
+						//	alert('예약가능한 날짜가 없습니다.');
+						//	showing_consult_area(); // 전문상담원 안내
+						//}else{
+							$("#mddrId").val(mddrId);
+							$("#mddrNm").val(mddrNm);
+							$("#smcrYn").val(smcrYn);
+							$("#mcdpCd").val(mcdpCd);
+							$("#step2").html(data);
+							$('.wrap_direct_reservation .consult_only_info').removeClass('on');//전문상담원 안내 지우기
+							$('.reser_step2 .detail_section').addClass('on');
+							$('.outer_datelist01').show();
+							$('.bottom_addition_txt10').show();//하단 상담멘트 보여주기
+							$('.outer_datelist01').nanoScroller();//스크롤호출
+							$('.reser_step3 .detail_section').removeClass('on');					//step3 히든처리
+							goReservationOkDate();	
+						//}
+					},
+					error : function(xhr, status, error) {
+						alert(error);
+					}
+				});
+				
+				logger.loginside("/loginside/onlineReservation/calendarList.do?type=H");
+			}else if($("#"+mddrId).parents('.doctor-profile').hasClass('consult_only')){
+				showing_consult_area(mcdpCd);////상담예약만 가능한 의사 일때 화면 보여주기
+			}
+			func_etc_remove();//3step안보여주기 //날짜 색빼기 //시간 색빼기
+		}
+	}
+	
+	/*
+	* 오늘날짜가 최상단으로 올 수 있도록 함.
+	*/
+	function goReservationOkDate(){
+		
+ 		var count = 0 ;
+ 		var maxSize = $('.outer_datelist01 > div > ul').find("li").length;
+ 		var date = new Date();
+		var todayMonth = date.getMonth()+1;
+
+		if(todayMonth.length == 1){
+ 			todayMonth = "0"+todayMonth;
+ 		}
+		
+		// 20200122 예약일이 먼저 노출되도록 수정하면서 주석처리
+		/* if($('.date_choice_month').find("strong").text() != todayMonth){
+			return;
+		} */
+
+ 		var todayDate = date.getDate() + "";
+ 		if(todayDate.length == 1){
+ 			todayDate = "0"+todayDate;
+ 		}
+ 		
+ 		// 20200122 예약일이 먼저 노출되도록 수정
+ 		for(var i=0 ; i<maxSize-1 ; i++){
+ 			//var dynamicDate = $('.outer_datelist01 > div > ul > li').eq(i).has('span').text().trim();
+			//if(dynamicDate.indexOf(todayDate) > -1){
+			var dynamicDate = $('.outer_datelist01 > div > ul > li').eq(i).has('a').text().trim();
+			if(dynamicDate != ""){
+ 				break;
+ 			}else{
+ 				count++;
+ 			}
+ 		}
+ 		var downsizeReal = $('.outer_datelist01 > div > ul > li').eq(count).offset().top - $('.outer_datelist01 > div > ul > li').eq(0).offset().top;
+ 		$('.outer_datelist01').nanoScroller({scrollTop:downsizeReal});
+	}
+	
+	function showing_consult_area(mcdpCd){//상담예약만 가능한 의사 일때 화면 보여주기
+		$('.wrap_direct_reservation .consult_only_info').addClass('on');
+		// 20220824  '111310' 이비인후과는 별도 메세지 추가
+		if(mcdpCd == '111310'){
+			$('.consult_only_info_111310').show();
+		}else{
+			$('.consult_only_info_111310').hide();
+		}
+	
+		$('.bottom_addition_txt10').hide();
+	}
+
+	
+	function searchDoctorId(sDeptCode, sDrCode){
+		
+		var $deferredsearchDoctorId = $.Deferred();
+		
+		$('.reser_step2 .detail_section,.reser_step3 .detail_section').removeClass('on');//step2,3 안보여주기
+		var params = {"sDeptCode":sDeptCode, "sDrCode":sDrCode, "memFieldYn":$("#memFieldYn").val()};
+
+		$.ajax({
+			type : "get",
+			url : "https://www.samsunghospital.com/home/reservation/ajaxOnlineReservationDctJson.do",
+			cache : false,
+			//dataType : "html",
+			dataType : "json",
+			data : params,
+			success : function(data) {
+				var html = "";
+				
+				if(data.doctorList.length <= 0){
+					html += '<div class="nodataDocTxt">';
+					html += '	<p>검색 결과가 없습니다.</p>';
+					html += '</div>';
+				}else{
+					var doc = data.doctorList;
+					var deptMap = data.deptMap;
+					var counsultOnly = (doc.RSVT_YN != 'Y' ? 'consult_only' : '');
+					var imgSrc = '';
+					var imgAlt = '';
+					if(doc.PHOTO_SYS_NM!=''){
+						imgSrc = '/upload/deptdoctors/' + doc.PHOTO_SYS_NM;
+						imgAlt = doc.mddrNm;
+					}else{
+						imgSrc = '/_newhome/ui/'+ '_component/static/img/default/default-profile02.png';	
+					}
+					
+					var gradeCode = typeof(doc.GRADE_CODE)!='undefined' ? doc.GRADE_CODE : ""; 
+					var dsKorNm = (typeof(deptMap[doc.mddrId].DS_KOR_NM)!='undefined' && deptMap[doc.mddrId].DS_KOR_NM != null) ? deptMap[doc.mddrId].DS_KOR_NM : "";
+					var br = '\n';
+					
+					html += '';
+					html += '<div class="card-item doctor-profile '+counsultOnly+'">' + br;
+					html += '<article class="card-content">' + br;
+					html += '	<section class="card-item-inner">' + br; 
+					html += '	<a href="javascript:showing_step2(\''+doc.mddrId+'\',\''+doc.mddrNm+'\',\''+doc.mcdpCd+'\',\''+doc.smcrYn+'\')" id="'+doc.mddrId+'">' + br;
+					html += '			<div class="card-content-img">' + br;
+					html += '				<img src="'+imgSrc+'" alt="'+imgAlt+'"/>' + br;
+					html += '					<div class="masking"></div>' + br;
+					html += '			</div>' + br;
+					html += '	<div class="card-content-textarea">' + br;
+					html += '		<h3 class="card-content-title">' + br;
+					html += '			<span class="text-blue">'+doc.mddrNm+'</span>' + br;
+					html += '			<span>'+gradeCode+'</span>' + br;
+					html += '			<span class="treatment-parts">['+doc.kornDprtNm+']</span>' + br;
+					if(doc.smcrYn=='Y'){
+						// html += '		<span class="able_doc_choice">선택진료</span>' + br; // 2018.01.01. 선택진료 삭제.
+					}
+					html += '			<span class="chked"></span>' + br;
+					html += '		</h3>' + br;
+					html += '		<h4 class="field-title">[진료분야]</h4>' + br;
+					html += '			<p class="card-content-text">'+dsKorNm+'</p>' + br;
+					html += '	</div>' + br;
+					html += '	</a>' + br;
+					html += '	</section>' + br;
+					html += '</article>' + br;
+					html += '</div>' + br;
+				}
+				
+				$("#searchDoctorList").html(html);
+				$('.outer_able_doctorlist02').nanoScroller();
+				
+				$deferredsearchDoctorId.resolve();
+			},
+			error : function(xhr, status, error) {
+				alert(error);
+			}
+		});
+		
+		logger.loginside("/loginside/onlineReservation/doctorList.do?type=H");
+		return  $deferredsearchDoctorId.promise();
+	}
+	
+	
+	function search(search){
+		
+		if($("#keyword").val()==""){
+			alert("의료진명을 입력해주세요.");
+			return;
+		}
+		if($("#keyword").val().length<=1){
+			alert("의료진명을 두글자 이상 입력해 주세요");
+			return false;
+		}
+		
+		$('.reser_step2 .detail_section,.reser_step3 .detail_section').removeClass('on');//step2,3 안보여주기
+		
+		var searchForm = document.searchForm;
+		if(search == "doctor"){
+			searchForm.search.value = search;
+			searchForm.searchKeyword.value = $("#keyword").val();
+		}
+		
+		$.ajax({
+			//async : false,
+			type : "get",
+			url : "https://www.samsunghospital.com/home/reservation/ajaxOnlineReservationDct.do",
+			cache : false,
+			dataType : "html",
+			data : $("#searchForm").serialize(),
+			success : function(data) {
+				if(data.indexOf("img") == -1){
+					data += '<div class="nodataDocTxt">';
+					data += '<p>검색 결과가 없습니다.</p>'
+					data += '</div>'	
+				}
+				$("#searchDoctorList").html(data);
+				$('.outer_able_doctorlist02').nanoScroller();
+				$deferred.resolve();
+			},
+			error : function(xhr, status, error) {
+				alert(error);
+			}
+		});
+		
+		logger.loginside("/loginside/onlineReservation/doctorList.do?type=H");
+		return  $deferred.promise();
+	}
+	
+	// 의료진으로 예약시 검색어 placeholder 관련
+	$("#keyword").bind("focus",function(){
+		$(this).attr("placeholder","");
+		
+	});
+	// 의료진으로 예약시 검색어 placeholder 관련
+	$("#keyword").bind("blur",function(){
+		if($(this).val()==""){
+			$(this).attr("placeholder","의료진명을 입력해주세요");	
+		}
+	});
+	// 의료진으로 예약시 검색 바인딩 
+	$("input[name='keyword']").keydown(function(key){
+		if(key.keyCode==13){
+			search('doctor');
+			
+		}
+	});
+	
+	/* 익스에서 돋보기 누를시 search 함수를 a태그 click이벤트에 바인딩시키면 is not a function 에러가 나서 추가 */
+	$(".btn_doc_srch").click(function(){
+		search('doctor');
+	});
+	
+	
+	// 선택진료란
+	/* $('body').on('click','.outer_choicedExam_info .inner_choicedExam_info .anch',function(e){
+        e.preventDefault();
+        if (!$(this).hasClass('on'))
+        {
+            $(this).addClass('on').parent('.inner_choicedExam_info').next('.specific_infobox').show();
+        }else if($(this).hasClass('on')){
+            $(this).removeClass('on').parent('.inner_choicedExam_info').next('.specific_infobox').hide();
+        }
+    }); */
+	
+	
+</script>
+
+<!-- 검색 구분 -->
+<form method="post" name="searchForm" id="searchForm">
+	<input type="hidden" name="viewId" value="step1"/>
+	<input type="hidden" name="search" />
+	<input type="hidden" name="searchKeyword" />
+</form>
+
+	<div class="flag_tb02">
+		<a href="#;" class="dept on">진료과로 예약</a>
+		<a href="#;" class="doct">의료진으로 예약</a>		
+		<!-- 2017-01-25 선택진료란 말풍선 추가 -->
+		 
+		<!-- //2017-01-25 선택진료란 말풍선 추가 -->
+	</div>
+	<!-- 진료과예약1 dept_list01 -->
+	<div class="dept_list01">
+		<p class="visuallyhidden">진료과로 예약</p>
+		<div class="wrapper_dept_list01_sel nano nano_popup_ar"> <!-- 스크롤 추가 2017-01-02 -->
+			<div class="nano-content"> <!-- 스크롤 추가 2017-01-02 -->
+				<ul class="dept_list01_sel"><!-- db에서 데이터 가져오기 -->
+					
+						<li><a href="javascript:deptSel1('FM','111340','가정의학과');"><strong>가정의학과</strong></a></li>
+					
+						<li><a href="javascript:deptSel1('IM7','111170','감염내과분과');"><strong>감염내과분과</strong></a></li>
+					
+						<li><a href="javascript:deptSel1('IHS','112340','국제진료센터');"><strong>국제진료센터</strong></a></li>
+					
+						<li><a href="javascript:deptSel1('IM4','111140','내분비대사내과분과');"><strong>내분비대사내과분과</strong></a></li>
+					
+						<li><a href="javascript:deptSel1('IM9','111190','류마티스내과분과');"><strong>류마티스내과분과</strong></a></li>
+					
+						<li><a href="javascript:deptSel1('AN','112110','마취통증의학과');"><strong>마취통증의학과</strong></a></li>
+					
+						<li><a href="javascript:deptSel1('RT','112130','방사선종양학과');"><strong>방사선종양학과</strong></a></li>
+					
+						<li><a href="javascript:deptSel1('URO','111290','비뇨의학과');"><strong>비뇨의학과</strong></a></li>
+					
+						<li><a href="javascript:deptSel1('OBGY','111260','산부인과');"><strong>산부인과</strong></a></li>
+					
+						<li><a href="javascript:deptSel1('PS','111250','성형외과');"><strong>성형외과</strong></a></li>
+					
+						<li><a href="javascript:deptSel1('PED','111270','소아청소년과');"><strong>소아청소년과</strong></a></li>
+					
+						<li><a href="javascript:deptSel1('IM1','111110','소화기내과분과');"><strong>소화기내과분과</strong></a></li>
+					
+						<li><a href="javascript:deptSel1('IM2','111120','순환기내과분과');"><strong>순환기내과분과</strong></a></li>
+					
+						<li><a href="javascript:deptSel1('NR','111320','신경과');"><strong>신경과</strong></a></li>
+					
+						<li><a href="javascript:deptSel1('NS','111230','신경외과');"><strong>신경외과</strong></a></li>
+					
+						<li><a href="javascript:deptSel1('IM5','111150','신장내과분과');"><strong>신장내과분과</strong></a></li>
+					
+						<li><a href="javascript:deptSel1('OPH','111300','안과');"><strong>안과</strong></a></li>
+					
+						<li><a href="javascript:deptSel1('IM8','111180','알레르기내과분과');"><strong>알레르기내과분과</strong></a></li>
+					
+						<li><a href="javascript:deptSel1('GS','111210','외과');"><strong>외과</strong></a></li>
+					
+						<li><a href="javascript:deptSel1('ENT','111310','이비인후과');"><strong>이비인후과</strong></a></li>
+					
+						<li><a href="javascript:deptSel1('IMZ','200932','일반내과(분과)');"><strong>일반내과(분과)</strong></a></li>
+					
+						<li><a href="javascript:deptSel1('REH','112170','재활의학과');"><strong>재활의학과</strong></a></li>
+					
+						<li><a href="javascript:deptSel1('PSY','111330','정신건강의학과');"><strong>정신건강의학과</strong></a></li>
+					
+						<li><a href="javascript:deptSel1('OS','111240','정형외과');"><strong>정형외과</strong></a></li>
+					
+						<li><a href="javascript:deptSel1('DER','111280','피부과');"><strong>피부과</strong></a></li>
+					
+						<li><a href="javascript:deptSel1('IM6','111160','혈액종양내과분과');"><strong>혈액종양내과분과</strong></a></li>
+					
+						<li><a href="javascript:deptSel1('IM3','111130','호흡기내과분과');"><strong>호흡기내과분과</strong></a></li>
+					
+						<li><a href="javascript:deptSel1('TS','111220','흉부외과');"><strong>흉부외과</strong></a></li>
+					
+				</ul>
+			</div> <!-- //스크롤 추가 2017-01-02 -->
+		</div> <!-- //스크롤 추가 2017-01-02 -->
+	</div>
+	<!-- //진료과예약1 dept_list01 -->
+
+	<!-- 진료과예약2 dept_list02 -->
+	<div class="dept_list02" style="display:none">
+		<p class="visuallyhidden">진료과로 예약이어서</p>
+		<div class="outer_sel_dept">
+			<p class="sel_list_title">
+				<a href="#;"><span class="title_selected">흉부외과<!-- 밑에 스크립트에서 자동으로 텍스트 들어감 --></span> <span class="visuallyhidden">또 다른 진료과를 선택하시려면 클릭하세요</span></a>
+			</p>
+			<p class="visuallyhidden">다른 진료과 선택하기</p>
+			<div class="wrapper_dept_list02_sel" style="display:none"><!-- 2017-01-02 스크롤 추가 -->
+				<div class="inner_src_area nano nano_popup_ar"><!-- 2017-01-02 스크롤 추가 -->
+					<div class="nano-content"><!-- 2017-01-02 스크롤 추가 -->
+						<ul class="dept_list02_sel">
+							
+								<li><a href="javascript:deptSel2('FM','111340','가정의학과');"><strong>가정의학과</strong></a></li>
+							
+								<li><a href="javascript:deptSel2('IM7','111170','감염내과분과');"><strong>감염내과분과</strong></a></li>
+							
+								<li><a href="javascript:deptSel2('IHS','112340','국제진료센터');"><strong>국제진료센터</strong></a></li>
+							
+								<li><a href="javascript:deptSel2('IM4','111140','내분비대사내과분과');"><strong>내분비대사내과분과</strong></a></li>
+							
+								<li><a href="javascript:deptSel2('IM9','111190','류마티스내과분과');"><strong>류마티스내과분과</strong></a></li>
+							
+								<li><a href="javascript:deptSel2('AN','112110','마취통증의학과');"><strong>마취통증의학과</strong></a></li>
+							
+								<li><a href="javascript:deptSel2('RT','112130','방사선종양학과');"><strong>방사선종양학과</strong></a></li>
+							
+								<li><a href="javascript:deptSel2('URO','111290','비뇨의학과');"><strong>비뇨의학과</strong></a></li>
+							
+								<li><a href="javascript:deptSel2('OBGY','111260','산부인과');"><strong>산부인과</strong></a></li>
+							
+								<li><a href="javascript:deptSel2('PS','111250','성형외과');"><strong>성형외과</strong></a></li>
+							
+								<li><a href="javascript:deptSel2('PED','111270','소아청소년과');"><strong>소아청소년과</strong></a></li>
+							
+								<li><a href="javascript:deptSel2('IM1','111110','소화기내과분과');"><strong>소화기내과분과</strong></a></li>
+							
+								<li><a href="javascript:deptSel2('IM2','111120','순환기내과분과');"><strong>순환기내과분과</strong></a></li>
+							
+								<li><a href="javascript:deptSel2('NR','111320','신경과');"><strong>신경과</strong></a></li>
+							
+								<li><a href="javascript:deptSel2('NS','111230','신경외과');"><strong>신경외과</strong></a></li>
+							
+								<li><a href="javascript:deptSel2('IM5','111150','신장내과분과');"><strong>신장내과분과</strong></a></li>
+							
+								<li><a href="javascript:deptSel2('OPH','111300','안과');"><strong>안과</strong></a></li>
+							
+								<li><a href="javascript:deptSel2('IM8','111180','알레르기내과분과');"><strong>알레르기내과분과</strong></a></li>
+							
+								<li><a href="javascript:deptSel2('GS','111210','외과');"><strong>외과</strong></a></li>
+							
+								<li><a href="javascript:deptSel2('ENT','111310','이비인후과');"><strong>이비인후과</strong></a></li>
+							
+								<li><a href="javascript:deptSel2('IMZ','200932','일반내과(분과)');"><strong>일반내과(분과)</strong></a></li>
+							
+								<li><a href="javascript:deptSel2('REH','112170','재활의학과');"><strong>재활의학과</strong></a></li>
+							
+								<li><a href="javascript:deptSel2('PSY','111330','정신건강의학과');"><strong>정신건강의학과</strong></a></li>
+							
+								<li><a href="javascript:deptSel2('OS','111240','정형외과');"><strong>정형외과</strong></a></li>
+							
+								<li><a href="javascript:deptSel2('DER','111280','피부과');"><strong>피부과</strong></a></li>
+							
+								<li><a href="javascript:deptSel2('IM6','111160','혈액종양내과분과');"><strong>혈액종양내과분과</strong></a></li>
+							
+								<li><a href="javascript:deptSel2('IM3','111130','호흡기내과분과');"><strong>호흡기내과분과</strong></a></li>
+							
+								<li><a href="javascript:deptSel2('TS','111220','흉부외과');"><strong>흉부외과</strong></a></li>
+							
+						</ul>
+					</div><!-- //2017-01-02 스크롤 추가 -->
+				</div><!-- //2017-01-02 inner_src_area 스크롤 추가 -->
+			</div><!-- //2017-01-02 wrapper_dept_list02_sel 스크롤 추가 -->	
+		</div>
+		<!-- //outer_sel_dept 리스트 팝업 -->
+
+		<!-- outer_able_doctorlist outer_able_doctorlist01 의료진 리스트 -->
+		<div class="outer_able_doctorlist outer_able_doctorlist01 nano nano_popup_ar" >
+			<div class="nano-content" id="deptDoctor">
+				<!-- 지금 쓰고 있는 의료진 검색쪽 그대로 가져옴 
+				다만 상담만 가능한 아이템 클래스추가와 선택진료표시 태그와 h3안 체크아이콘이 추가됨 --><!-- 디자인된 스크롤을 위해 ajax라면 success후 함수 여긴$('.outer_able_doctorlist01').nanoScroller() 호출해야함 -->
+					<div class="card-item doctor-profile consult_only"> <!-- 상담예약만 가능할때 클래스추가 consult_only --><!-- 상담예약만 가능할때 클래스추가 consult_only -->
+						<article class="card-content">
+							<section class="card-item-inner">
+								<!-- 이미지 영역 -->
+								<a href="#;">
+									<div class="card-content-img">
+										<img src="http://www.samsunghospital.com/upload/deptdoctors/1427844001370_170689.jpg" alt="박주경" />	
+										<div class="masking"></div>
+									</div> <!-- /이미지 영역 -->
+	
+									<div class="card-content-textarea">
+										<h3 class="card-content-title">
+											<span class="text-blue">박주경</span>
+											<span>교수</span>
+											<span class="treatment-parts">[소화기내과]</span>
+											
+											<span class="chked"><!-- 체크박스 아이콘추가 --></span>
+										</h3>
+										<h4 class="field-title">[진료분야]</h4>
+										<p class="card-content-text">췌장암, 담낭암, 담도암, 췌장염, 췌장의 양성종양, 담석증, 내시경초음파</p>
+										
+									</div>
+								</a>
+							</section>
+						</article>
+					</div><!-- //card-item doctor-profile -->
+					<div class="card-item doctor-profile">
+						<article class="card-content">
+							<section class="card-item-inner">
+								<!-- 이미지 영역 -->
+								<a href="#;">
+									<div class="card-content-img">
+										
+											
+												<img src="http://www.samsunghospital.com/upload/deptdoctors/1427844001370_170689.jpg" alt="박주경" />	
+											
+											
+										
+										<div class="masking"></div>
+									</div> <!-- /이미지 영역 -->
+	
+									<div class="card-content-textarea">
+										<h3 class="card-content-title"><span class="text-blue">박주경</span> <span>교수</span><span class="treatment-parts">[소화기내과]</span><!-- 선택 진료 태그추가 --><span class="able_doc_choice">선택진료</span><span class="chked"><!-- 체크박스 아이콘추가 --></span></h3>
+										<h4 class="field-title">[진료분야]</h4>
+										<p class="card-content-text">췌장암, 담낭암, 담도암, 췌장염, 췌장의 양성종양, 담석증, 내시경초음파</p>
+										
+									</div>
+								</a>
+							</section>
+						</article>
+					</div><!-- //card-item doctor-profile -->
+					<div class="card-item doctor-profile">
+						<article class="card-content">
+							<section class="card-item-inner">
+								<!-- 이미지 영역 -->
+								<a href="#;">
+									<div class="card-content-img">
+										
+											
+												<img src="http://www.samsunghospital.com/upload/deptdoctors/1427844001370_170689.jpg" alt="박주경" />	
+											
+											
+										
+										<div class="masking"></div>
+									</div> <!-- /이미지 영역 -->
+	
+									<div class="card-content-textarea">
+										<h3 class="card-content-title"><span class="text-blue">박주경</span> <span>교수</span><span class="treatment-parts">[소화기내과]</span><!-- 선택 진료 태그추가 --><span class="able_doc_choice">선택진료</span><span class="chked"><!-- 체크박스 아이콘추가 --></span></h3>
+										<h4 class="field-title">[진료분야]</h4>
+										<p class="card-content-text">췌장암, 담낭암, 담도암, 췌장염, 췌장의 양성종양, 담석증, 내시경초음파</p>
+										
+									</div>
+								</a>
+							</section>
+						</article>
+					</div><!-- //card-item doctor-profile -->
+				<!-- // 지금 쓰고 있는 의료진 검색쪽  -->
+
+			</div><!--//nano-content 디자인 스크롤 부분 -->
+		</div>
+		<!-- //outer_able_doctorlist 디자인 스크롤 부분 nano nano_popup_ar -->
+	</div>
+	<!-- //진료과예약2 dept_list02 -->
+	
+	<!-- 의료진으로 예약 탭 -->
+	<div class="outer_doctor_choice" style="display:none">
+		<p class="visuallyhidden">의료진으로 예약</p>
+		<div class="srch_doctor_name">
+			<input type="text" id="keyword" name="keyword" value="" class="input_txt" placeholder="의료진명을 입력해주세요" onkeyup="chkInputSC(this.value, this.id);"/>
+			<a href="#;" class="btn_doc_srch"><span class="visuallyhidden">검색</span></a>
+		</div>
+		<!-- outer_able_doctorlist02 의료진 리스트 -->
+		<div class="outer_able_doctorlist outer_able_doctorlist02 nano nano_popup_ar" >
+			<div class="nano-content" id="searchDoctorList">
+			</div><!--//nano-content 디자인 스크롤 부분 -->
+		</div>
+		<!-- //outer_able_doctorlist 디자인 스크롤 부분 nano nano_popup_ar -->
+
+	</div>
+	<!-- //의료진으로 예약 탭 -->
+</html>
